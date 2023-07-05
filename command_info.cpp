@@ -20,7 +20,7 @@ std::ostream &operator<<(std::ostream &os, const command_info &command)
     os << "min file size: " << command.min_file_size << std::endl;
     os << "file name masks: " << utils::vector_helper::get_stream(command.file_name_masks).str() << std::endl;
     os << "compare block size: " << command.compare_block_size << std::endl;
-    os << "hash algorihm: " << utils::enum_helpers::enum_to_string(command.hash_algorihm) << std::endl;
+    os << "hash algorihm: " << utils::enum_helpers::enum_to_string(command.algorithm) << std::endl;
     return os;
 }
 
@@ -68,7 +68,7 @@ void command_info::fill_command(const std::vector<std::string> &args)
         }
         else if (*i == "-a" || *i == "--hash_algorithm")
         {
-            current_parameter = parameter::hash_algorithm;
+            current_parameter = parameter::algorithm;
             current_parameter_changed = true;
         }
 
@@ -121,8 +121,8 @@ void command_info::fill_command(const std::vector<std::string> &args)
                 std::cout << "NaN error: compare_block_size " << e.what() << std::endl;
             }
             break;
-        case parameter::hash_algorithm:
-            this->hash_algorihm = utils::enum_helpers::string_to_enum<command::hash_algorihm>(argument.c_str());
+        case parameter::algorithm:
+            this->algorithm = utils::enum_helpers::string_to_enum<command::hash_algorihm>(argument.c_str());
             break;
         case parameter::help:
             std::cout << "Some help info" << std::endl;

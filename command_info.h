@@ -13,7 +13,7 @@ enum parameter
     min_file_size,      // Minimal file size to scan, Bytes. 1 byte is default
     file_name_masks,    // Filename masks
     compare_block_size, // Read buffer block size
-    hash_algorithm,     // Hash algorithm
+    algorithm,          // Hash algorithm
 
     help,               // Print help
     undefined_parameter // default one
@@ -44,7 +44,7 @@ class command_info : public base_command
     size_t min_file_size;
     std::vector<std::string> file_name_masks;
     size_t compare_block_size;
-    hash_algorihm hash_algorihm;
+    hash_algorihm algorithm;
 
     void fill_command(const std::vector<std::string> &args);
 

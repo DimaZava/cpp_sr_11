@@ -2,45 +2,38 @@ cmake_minimum_required(VERSION 3.5)
 
 project(sr_11)
 
-find_package(Boost 1.83.0 REQUIRED COMPONENTS)
-find_package(Threads REQUIRED)
+find_package(Boost 1.83.0 COMPONENTS thread filesystem system REQUIRED)
+include_directories(${BOOST_INCLUDE_DIR})
 
-include_directories(${Boost_INCLUDE_DIRS})
+message("boost lib: ${Boost_LIBRARIES}")
+message("boost inc:${Boost_INCLUDE_DIR}")
+message("boost inc:${Boost_INCLUDE_DIRS}")
 
-add_executable(bayan main.cpp)
-add_library(command_info command_info.h command_info.cpp)
-add_library(utils utils.h utils.cpp)
+if(NOT Boost_FOUND)
+    message(FATAL_ERROR "Could not find boost!")
+endif()
 
-target_link_libraries(bayan 
-PRIVATE_HEADER
-${CMAKE_THREAD_LIBS_INIT}
-command_info
-utils
+add_executable(main 
+    main.cpp 
+    utils.cpp
+    command_info.cpp
 )
 
-set_target_properties(bayan command_info utils PROPERTIES
+target_link_libraries(main
+    ${Boost_LIBRARIES}
+)
+
+set_target_properties(main PROPERTIES
     CXX_STANDARD 17
     CXX_STANDARD_REQUIRED ON
     )
 
 if (MSVC)
-    target_compile_options(bayan PRIVATE
-        /W4
-    )
-    target_compile_options(command_info PRIVATE
-        /W4
-    )
-    target_compile_options(utils PRIVATE
+    target_compile_options(main PRIVATE
         /W4
     )
 else ()
-    target_compile_options(bayan PRIVATE
-        -Wall -Wextra -pedantic -Werror
-    )
-    target_compile_options(command_info PRIVATE
-        -Wall -Wextra -pedantic -Werror
-    )
-    target_compile_options(utils PRIVATE
+    target_compile_options(main PRIVATE
         -Wall -Wextra -pedantic -Werror
     )
 endif()
@@ -51,7 +44,7 @@ else()
     set(CPACK_GENERATOR DEB)
 endif()
 
-install(TARGETS bayan RUNTIME DESTINATION bin)
+install(TARGETS main RUNTIME DESTINATION bin)
 
 set(CPACK_PACKAGE_VERSION_MAJOR "${PROJECT_VERSION_MAJOR}")
 set(CPACK_PACKAGE_VERSION_MINOR "${PROJECT_VERSION_MINOR}")
