@@ -11,8 +11,22 @@
 
 int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv)
 {
-    const char *debug_args[] = {"app_path", "-i", "tmpdir", "-e", "exctmpdir", "-d", "3",    "-s",
-                                "512",      "-m", "test",   "-c", "16",        "-a", "crc32"};
+    const char *debug_args[] = {
+        "app_path",
+        "-i",
+        "/Users/dimazava/Developer/cpp_sr_11/include_dir",
+        "-e",
+        "/Users/dimazava/Developer/cpp_sr_11/include_dir/include_dir_lvl1/exclude_dir",
+        "-d",
+        "1",
+        "-s",
+        "16",
+        "-m",
+        "_allow",
+        "-c",
+        "16",
+        "-a",
+        "crc32"};
     // std::vector<std::string> args(argv + 1, argv + argc);
     std::vector<std::string> args(debug_args + 1, debug_args + std::size(debug_args));
 
@@ -20,12 +34,10 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv)
     // std::map<std::string, boost::function<command::base_command *()>> factories;
     // actories["command_info"] = boost::factory<command::command_info *>();
     // command::command_info *command_info = static_cast<class command::command_info *>(factories["command_info"]());
+
     command::command_info *command_info = new command::command_info{};
     command_info->fill_command(args);
-    // command_info->test();
-    // std::string tmp = "utils::enum_helpers::enum_to_string(command_info->hash_algorihm)";
-    // std::cout << tmp << std::endl;
-    std::cout << "hello world" << std::endl;
+    command_info->process();
 
     return 0;
 }
