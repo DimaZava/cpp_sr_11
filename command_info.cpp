@@ -241,20 +241,18 @@ void command_info::iterate_files(
 /// othewise - false
 bool command_info::compare_files(std::ifstream& lhs, std::ifstream& rhs)
 {
-    auto lhs_buf = std::vector<std::byte>(compare_block_size);
-    auto rhs_buf = std::vector<std::byte>(compare_block_size);
+    auto lhs_buf = std::vector<char>(compare_block_size);
+    auto rhs_buf = std::vector<char>(compare_block_size);
+
     std::streamoff compare_block_stream_size = static_cast<std::streamoff>(compare_block_size);
 
     bool is_found_equal = false;
     while (true)
     {
-        lhs.seekg(compare_block_stream_size, std::ios_base::cur);
-        rhs.seekg(compare_block_stream_size, std::ios_base::cur);
+        lhs.read(lhs_buf.data(), compare_block_stream_size);
+        rhs.read(rhs_buf.data(), compare_block_stream_size);
 
-        lhs.read(reinterpret_cast<char*>(lhs_buf.data()), compare_block_stream_size);
-        rhs.read(reinterpret_cast<char*>(rhs_buf.data()), compare_block_stream_size);
-
-        if (lhs_buf.empty() && rhs_buf.empty())
+        if (lhs.gcount() == 0 && rhs.gcount() == 0)
         {
             is_found_equal = true;
             break;
@@ -264,14 +262,15 @@ bool command_info::compare_files(std::ifstream& lhs, std::ifstream& rhs)
             is_found_equal = false;
             break;
         }
-
         lhs_buf.clear();
         rhs_buf.clear();
+        lhs_buf.resize(compare_block_size);
+        rhs_buf.resize(compare_block_size);
     }
     return is_found_equal;
 }
 
-bool command_info::compare_filechunks(std::byte* lhs, size_t lhs_size, std::byte* rhs, size_t rhs_size) const
+bool command_info::compare_filechunks(char* lhs, size_t lhs_size, char* rhs, size_t rhs_size) const
 {
     bool is_equal = false;
     switch (algorithm)

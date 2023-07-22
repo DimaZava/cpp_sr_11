@@ -73,6 +73,6 @@ class command_info : public base_command
       void collect_files(std::string directory, std::vector<std::string> &collected_files);
       void iterate_files(std::string file_string_path, std::set<std::string> files_to_compare, std::set<std::filesystem::path> &duplicates);
       bool compare_files(std::ifstream &lhs, std::ifstream &rhs);
-      bool compare_filechunks(std::byte *lhs, size_t lhs_size, std::byte *rhs, size_t rhs_size) const;
+      bool compare_filechunks(char *lhs, size_t lhs_size, char *rhs, size_t rhs_size) const;
 };
 } // namespace command
