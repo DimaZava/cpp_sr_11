@@ -163,7 +163,7 @@ void command_info::process()
         this->iterate_files(file_string_path, files_to_compare, duplicates);
         ++it;
     }
-    std::cout << "Found duplicates:\n" << utils::set_helper::get_stream(duplicates).str() << "\n";
+    std::cout << "\nFound duplicates:\n" << utils::set_helper::get_stream(duplicates, "\n").str() << "\n";
 }
 
 void command_info::collect_files(std::string directory, std::vector<std::string>& collected_files)

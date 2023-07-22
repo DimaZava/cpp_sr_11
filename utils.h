@@ -58,13 +58,13 @@ char const *enum_to_string(E e)
 
 namespace vector_helper {
 template <typename T>
-std::ostringstream get_stream(const std::vector<T> &vector)
+std::ostringstream get_stream(const std::vector<T> &vector, std::string split_str = ", ")
 {
     std::ostringstream output;
     output << "[" << *vector.begin();
     for (auto it = vector.begin() + 1; it != vector.end(); ++it)
     {
-        output << ", " << *it;
+        output << split_str << *it;
     }
     output << "]";
     return output;
@@ -73,7 +73,7 @@ std::ostringstream get_stream(const std::vector<T> &vector)
 
 namespace set_helper {
 template <typename T>
-std::ostringstream get_stream(const std::set<T> &set)
+std::ostringstream get_stream(const std::set<T> &set, std::string split_str = ", ")
 {
     std::ostringstream output;
     auto it = set.begin();
@@ -81,7 +81,7 @@ std::ostringstream get_stream(const std::set<T> &set)
     ++it;
     for (; it != set.end(); ++it)
     {
-        output << ", " << *it;
+        output << split_str << *it;
     }
     output << "]";
     return output;
