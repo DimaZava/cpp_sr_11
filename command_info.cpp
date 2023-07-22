@@ -143,6 +143,7 @@ void command_info::process()
     for (const auto& directory : this->input_dirs)
     {
         collect_files(directory, collected_files);
+        current_depth_level = 0;
     }
 
     std::set<std::filesystem::path> duplicates;
