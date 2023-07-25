@@ -187,6 +187,9 @@ void command_info::collect_files(std::string directory, std::vector<std::string>
         }
         else
         {
+            if (entry.file_size() < min_file_size)
+                continue;
+
             auto path_string = entry.path().filename().string();
             auto file_mask_compare_closure = [&path_string](std::string current_path) {
                 return path_string.find(current_path) != std::string::npos;
