@@ -5,6 +5,7 @@
 #include <vector>
 #include <random>
 #include <limits>
+#include <optional>
 
 namespace command
 {
@@ -56,11 +57,11 @@ class command_info : public base_command
   public:
       std::set<std::string> input_dirs;
       std::set<std::string> exclude_dirs;
-      size_t depth_level;
-      size_t min_file_size;
+      size_t depth_level = 1;
+      std::optional<size_t> min_file_size;
       std::set<std::string> file_name_masks;
-      size_t compare_block_size;
-      hash_algorihm algorithm;
+      std::optional<size_t> compare_block_size;
+      hash_algorihm algorithm = hash_algorihm::md5;
 
       void fill_command(const std::vector<std::string> args);
       void process();

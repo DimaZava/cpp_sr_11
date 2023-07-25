@@ -5,32 +5,16 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <chrono>
 
 #include "command_info.h"
 #include "utils.h"
 
 int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv)
 {
-    // const char *debug_args[] = {
-    //     "app_path",
-    //     "-i",
-    //     "/Users/dimazava/Developer/cpp_sr_11/include_dir",
-    //     "/Users/dimazava/Developer/cpp_sr_11/include_dir2",
-    //     "-e",
-    //     "/Users/dimazava/Developer/cpp_sr_11/include_dir/include_dir_lvl1/exclude_dir",
-    //     "-d",
-    //     "1",
-    //     "-s",
-    //     "16",
-    //     "-m",
-    //     "_allow",
-    //     "-c",
-    //     "16",
-    //     "-a",
-    //     "crc32"};
-    // std::vector<std::string> args(debug_args + 1, debug_args + std::size(debug_args));
+    std::vector<std::string> args(debug_args + 1, debug_args + std::size(debug_args));
 
-    std::vector<std::string> args(argv + 1, argv + argc);
+    // std::vector<std::string> args(argv + 1, argv + argc);
 
     // factory thing just to demonstrate boost usage
     // std::map<std::string, boost::function<command::base_command *()>> factories;
@@ -39,7 +23,12 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char **argv)
 
     command::command_info *command_info = new command::command_info{};
     command_info->fill_command(args);
+
+    const auto start = std::chrono::steady_clock::now();
     command_info->process();
+    const auto end = std::chrono::steady_clock::now();
+    const std::chrono::duration<double> elapsed_seconds = end - start;
+    std::cout << "Elapsed time: " << elapsed_seconds.count() << std::endl;
 
     return 0;
 }

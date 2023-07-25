@@ -19,9 +19,14 @@ std::ostream& operator<<(std::ostream& os, const command_info& command)
     os << "input dirs: " << utils::set_helper::get_stream(command.input_dirs).str() << "\n";
     os << "exclude dirs: " << utils::set_helper::get_stream(command.exclude_dirs).str() << "\n";
     os << "depth level: " << command.depth_level << "\n";
-    os << "min file size: " << command.min_file_size << "\n";
+    os << "min file size: " << command.min_file_size.value_or(0) << "\n";
     os << "file name masks: " << utils::set_helper::get_stream(command.file_name_masks).str() << "\n";
-    os << "compare block size: " << command.compare_block_size << "\n";
+
+    if (command.compare_block_size.has_value())
+        os << "compare block size: " << command.compare_block_size.value() << "\n";
+    else
+        os << "compare block size: file size\n";
+
     os << "hash algorihm: " << utils::enum_helpers::enum_to_string(command.algorithm) << "\n";
     return os;
 }
@@ -194,9 +199,9 @@ void command_info::collect_files(std::string directory, std::vector<std::string>
             auto file_mask_compare_closure = [&path_string](std::string current_path) {
                 return path_string.find(current_path) != std::string::npos;
             };
-
-            if (auto it = std::find_if(file_name_masks.begin(), file_name_masks.end(), file_mask_compare_closure);
-                it != file_name_masks.end())
+            ;
+            if (file_name_masks.empty() ||
+                std::find_if(file_name_masks.begin(), file_name_masks.end(), file_mask_compare_closure) != file_name_masks.end())
             {
                 std::cout << "file\n";
                 collected_files.push_back(entry.path());
@@ -245,16 +250,24 @@ void command_info::iterate_files(
 /// othewise - false
 bool command_info::compare_files(std::ifstream& lhs, std::ifstream& rhs)
 {
-    auto lhs_buf = std::vector<char>(compare_block_size);
-    auto rhs_buf = std::vector<char>(compare_block_size);
+    auto lhs_buf = std::vector<char>(compare_block_size.value_or(lhs.tellg()));
+    auto rhs_buf = std::vector<char>(compare_block_size.value_or(rhs.tellg()));
 
-    std::streamoff compare_block_stream_size = static_cast<std::streamoff>(compare_block_size);
+    std::streamoff compare_block_stream_size = static_cast<std::streamoff>(compare_block_size.value_or(0));
 
     bool is_found_equal = false;
     while (true)
     {
-        lhs.read(lhs_buf.data(), compare_block_stream_size);
-        rhs.read(rhs_buf.data(), compare_block_stream_size);
+        if (compare_block_size.has_value())
+        {
+            lhs.read(lhs_buf.data(), compare_block_stream_size);
+            rhs.read(rhs_buf.data(), compare_block_stream_size);
+        }
+        else
+        {
+            lhs.read(lhs_buf.data(), static_cast<std::streamoff>(lhs_buf.size()));
+            rhs.read(rhs_buf.data(), static_cast<std::streamoff>(rhs_buf.size()));
+        }
 
         if (lhs.gcount() == 0 && rhs.gcount() == 0)
         {
@@ -268,8 +281,8 @@ bool command_info::compare_files(std::ifstream& lhs, std::ifstream& rhs)
         }
         lhs_buf.clear();
         rhs_buf.clear();
-        lhs_buf.resize(compare_block_size);
-        rhs_buf.resize(compare_block_size);
+        lhs_buf.resize(compare_block_size.value_or(0));
+        rhs_buf.resize(compare_block_size.value_or(0));
     }
     return is_found_equal;
 }

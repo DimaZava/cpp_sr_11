@@ -61,6 +61,9 @@ template <typename T>
 std::ostringstream get_stream(const std::vector<T> &vector, std::string split_str = ", ")
 {
     std::ostringstream output;
+    if (vector.empty())
+        return output;
+
     output << "[" << *vector.begin();
     for (auto it = vector.begin() + 1; it != vector.end(); ++it)
     {
@@ -76,6 +79,9 @@ template <typename T>
 std::ostringstream get_stream(const std::set<T> &set, std::string split_str = ", ")
 {
     std::ostringstream output;
+    if (set.empty())
+        return output;
+        
     auto it = set.begin();
     output << "[" << *it;
     ++it;
